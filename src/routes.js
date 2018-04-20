@@ -5,10 +5,12 @@ import HomePage from './components/home/HomePage';
 import AboutPage from './components/about/AboutPage';
 import CoursesPage from './components/course/CoursesPage';
 
-export default (
+const routes = (
 	<Route path="/" component={App}>
 		<IndexRoute component={HomePage} />
 		<Route path="about" component={AboutPage} />
 		<Route path="courses" component={CoursesPage} />
 	</Route>
 );
+
+export default routes;
