@@ -4,6 +4,7 @@ import * as courseActions from '../../actions/courseActions';
 import { bindActionCreators } from 'redux';
 import CourseForm from './CourseForm';
 import { browserHistory } from 'react-router';
+import toastr from 'toastr';
 
 class ManageCoursesPage extends React.Component {
 
@@ -12,7 +13,8 @@ class ManageCoursesPage extends React.Component {
 
 		this.state = {
 			course: Object.assign({}, this.props.course),
-			errors: {}
+			errors: {},
+			saving: false
 		};
 
 		this.updatetCourseState = this.updatetCourseState.bind(this);
@@ -33,11 +35,23 @@ class ManageCoursesPage extends React.Component {
 		return this.setState({course: course});
 	}
 
+	redirect() {
+		this.setState({saving: false});
+		toastr.success('Course Saved');
+		this.context.router.push('/courses');
+	}
+
 	saveCourse(event) {
 		event.preventDefault();
-		this.props.actions.saveCourse(this.state.course);
+		this.setState({saving: true});
+		this.props.actions.saveCourse(this.state.course).then(() => {
+			this.redirect();
+		}).catch((error) => {
+			toastr.error(error);
+			this.setState({saving: false});
+		});
 		// browserHistory.push('/courses');
-		this.context.router.push('/courses');
+		
 		
 	}
 
@@ -45,7 +59,7 @@ class ManageCoursesPage extends React.Component {
 		return (
 				<CourseForm course={this.state.course} errors={this.state.errors}
 					allAuthors={this.props.authors} onChange={this.updatetCourseState}
-					onSave={this.saveCourse}
+					onSave={this.saveCourse} saving={this.state.saving}
 				/>
 		);
 	}
